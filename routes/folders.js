@@ -15,8 +15,15 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
+  const userId = req.user.id;
 
-  Folder.find()
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('`userId` is missing in request body or not valid');
+    err.status = 400;
+    return next(err);
+  }
+
+  Folder.find({userId})
     .sort('name')
     .then(results => {
       res.json(results);
@@ -29,6 +36,8 @@ router.get('/', (req, res, next) => {
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/:id', (req, res, next) => {
   const { id } = req.params;
+  const userId = req.user.id;
+
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
@@ -36,7 +45,13 @@ router.get('/:id', (req, res, next) => {
     return next(err);
   }
 
-  Folder.findById(id)
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('`userId` is missing in request body or not valid');
+    err.status = 400;
+    return next(err);
+  }
+
+  Folder.findOne({_id: id, userId})
     .then(result => {
       if (result) {
         res.json(result);
@@ -52,12 +67,20 @@ router.get('/:id', (req, res, next) => {
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/', (req, res, next) => {
   const { name } = req.body;
+  const userId = req.user.id;
 
-  const newFolder = { name };
+
+  const newFolder = { name, userId };
 
   /***** Never trust users - validate input *****/
   if (!name) {
     const err = new Error('Missing `name` in request body');
+    err.status = 400;
+    return next(err);
+  }
+
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('`userId` is missing in request body or not valid');
     err.status = 400;
     return next(err);
   }
@@ -79,6 +102,9 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const { name } = req.body;
+  const userId = req.user.id;
+
+
 
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -93,9 +119,15 @@ router.put('/:id', (req, res, next) => {
     return next(err);
   }
 
-  const updateFolder = { name };
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('`userId` is missing in request body or not valid');
+    err.status = 400;
+    return next(err);
+  }
 
-  Folder.findByIdAndUpdate(id, updateFolder, { new: true })
+  const updateFolder = { name, userId };
+
+  Folder.findOneAndUpdate({_id: id, userId}, updateFolder, { new: true })
     .then(result => {
       if (result) {
         res.json(result);
@@ -115,6 +147,8 @@ router.put('/:id', (req, res, next) => {
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
+  const userId = req.user.id;
+
 
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -123,8 +157,14 @@ router.delete('/:id', (req, res, next) => {
     return next(err);
   }
 
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('`userId` is missing in request body or not valid');
+    err.status = 400;
+    return next(err);
+  }
+
   // ON DELETE SET NULL equivalent
-  const folderRemovePromise = Folder.findByIdAndRemove(id);
+  const folderRemovePromise = Folder.findOneAndRemove({_id: id, userId});
   // ON DELETE CASCADE equivalent
   // const noteRemovePromise = Note.deleteMany({ folderId: id });
 

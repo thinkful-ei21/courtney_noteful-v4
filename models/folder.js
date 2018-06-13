@@ -3,8 +3,12 @@
 const mongoose = require('mongoose');
 
 const folderSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true }
+  name: { type: String, required: true},
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
+
+//.index({ options -> 1 = asc? })
+folderSchema.index({name: 1, userId: 1}, {unique: true});
 
 // Add `createdAt` and `updatedAt` fields
 folderSchema.set('timestamps', true);
