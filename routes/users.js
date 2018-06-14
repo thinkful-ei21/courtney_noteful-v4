@@ -9,8 +9,9 @@ const User = require('../models/user');
 
 
 router.post('/', (req, res, next) => {
-	const {username, password, fullname} = req.body;
-
+	let {username, password, fullname} = req.body;
+	fullname = fullname.trim();
+	
 	if(!username || !password) {
 		return res.status(422).json({
 			code: 422,
@@ -22,7 +23,7 @@ router.post('/', (req, res, next) => {
 	if(typeof username !== 'string' || typeof password !== 'string') {
 		return res.status(422).json({
       code: 422,
-      reason: 'ValidationError',
+      reason: 'Validation Error',
       message: 'Incorrect field type: expected string'
     });
 	}
@@ -30,7 +31,7 @@ router.post('/', (req, res, next) => {
 	if(username !== username.trim() || password !== password.trim()) {
 		return res.status(422).json({
       code: 422,
-      reason: 'ValidationError',
+      reason: 'Validation Error',
       message: 'Cannot start or end with whitespace'
     });
 	}
@@ -52,7 +53,7 @@ router.post('/', (req, res, next) => {
 	if(username.length < 1) {
 		return res.status(422).json({
       code: 422,
-      reason: 'ValidationError',
+      reason: 'Validation Error',
       message: '`username` is too short'
     });
 	}
@@ -60,7 +61,7 @@ router.post('/', (req, res, next) => {
 	if(password.length < 8 || password.length > 72) {
 		return res.status(422).json({
       code: 422,
-      reason: 'ValidationError',
+      reason: 'Validation Error',
       message: '`password` needs to be more than 8 characters and less than 72'
     });
 	}
@@ -98,7 +99,7 @@ router.post('/', (req, res, next) => {
  //    });
  //  }
 
-
+	
 	return User.hashPassword(password)
 		.then(digest => {
 			return User.create({
