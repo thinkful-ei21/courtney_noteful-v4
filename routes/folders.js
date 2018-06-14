@@ -17,12 +17,6 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or not valid');
-    err.status = 400;
-    return next(err);
-  }
-
   Folder.find({userId})
     .sort('name')
     .then(results => {
@@ -41,12 +35,6 @@ router.get('/:id', (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
-    err.status = 400;
-    return next(err);
-  }
-
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or not valid');
     err.status = 400;
     return next(err);
   }
@@ -75,12 +63,6 @@ router.post('/', (req, res, next) => {
   /***** Never trust users - validate input *****/
   if (!name) {
     const err = new Error('Missing `name` in request body');
-    err.status = 400;
-    return next(err);
-  }
-
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or not valid');
     err.status = 400;
     return next(err);
   }
@@ -119,12 +101,6 @@ router.put('/:id', (req, res, next) => {
     return next(err);
   }
 
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or not valid');
-    err.status = 400;
-    return next(err);
-  }
-
   const updateFolder = { name, userId };
 
   Folder.findOneAndUpdate({_id: id, userId}, updateFolder, { new: true })
@@ -153,12 +129,6 @@ router.delete('/:id', (req, res, next) => {
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
-    err.status = 400;
-    return next(err);
-  }
-
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or not valid');
     err.status = 400;
     return next(err);
   }

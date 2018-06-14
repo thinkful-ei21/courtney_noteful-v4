@@ -40,12 +40,6 @@ router.get('/:id', (req, res, next) => {
     return next(err);
   }
 
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or is not valid');
-    err.status = 400;
-    return next(err);
-  }
-
   Tag.findOne({_id: id, userId})
     .then(result => {
       if (result) {
@@ -74,12 +68,6 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or is not valid');
-    err.status = 400;
-    return next(err);
-  }
-
   Tag.create(newTag)
     .then(result => {
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
@@ -98,6 +86,7 @@ router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const { name } = req.body;
   const userId = req.user.id;
+  const updateTag = { name };
 
 
   /***** Never trust users - validate input *****/
@@ -112,14 +101,6 @@ router.put('/:id', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or is not valid');
-    err.status = 400;
-    return next(err);
-  }
-
-  const updateTag = { name };
 
   Tag.findOneAndUpdate({_id: id, userId}, updateTag, { new: true })
     .then(result => {
@@ -147,12 +128,6 @@ router.delete('/:id', (req, res, next) => {
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
-    err.status = 400;
-    return next(err);
-  }
-
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error('`userId` is missing in request body or not valid');
     err.status = 400;
     return next(err);
   }
