@@ -1,3 +1,10 @@
 language: node_js
 node_js: node
 services: mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: l6pMi1D3O8R9iC7mnjgfYxwHvUIRiefL7pM7zADtuKOu1if24rB60l1M8az9dT7L1d+6IAoFcDM6McykunGo66EVIHF1CkI/gRS+VrkNrTprQZCsDoixdisl2nj1E9YD36Iqu7muZxW1rBydHTJpYRgsHFVGa1eIUr0e46NOUXUO9HjDbcIWhcsMY18dyrv2Kfua41O7yF7s4C70n98Oady9PBYA+0XmY+Eg0vkvglPDmogAwvq3NyQ3Jbfw0b57jUl17zjFK4QtGS8SblHpbHYFLTMoN2P6YWZijazvk5386VK/aaUU1se90Zjovf7UydtCW+E+YtT2VhwMRczY5yr1A842y/qLwdAfFlkeyhOSLtEMsOOPIVKSVKxjRLzXSkteRntZwOTDKgNIZM5HS7YbqFi+bweS1VT0aaGd+S19kA3gfWcKjwrc4qqq+jMgBSR13vH10YUfrLvCr0UsZc7JvENEXWQamHxdMLBGxNgI5R5q7p2ZKtxGXk3jzSN5vN9JSgfffvt13TdCFKVcUEgA+iGHcGJN5+9tlpes0rZHJB4tEr/BtR8FaJacgV3XCuE739/KMxaJS1vaS5iIXyDBh2WTX6pEWN/hW40vY/Pi+Hb+bhHsG4XJfQoJNw79kV76a0h3htXycawhaTIuDgqnbSZmmfw+cgPYO7l+I2Q=
+  app: noteful-v4
+  on:
+    repo: thinkful-ei21/courtney_noteful-v4
